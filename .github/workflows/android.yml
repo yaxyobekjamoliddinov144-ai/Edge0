@@ -15,13 +15,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install NDK, platform, and build tools
+      - name: Install NDK and platform packages
         run: |
-          yes | sdkmanager --licenses > /dev/null
-          sdkmanager --install "ndk;28.2.13676358" "platforms;android-35" "build-tools;35.0.0"
+          SDKMANAGER=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | head -1)
+          yes | "$SDKMANAGER" --licenses > /dev/null
+          "$SDKMANAGER" "ndk;28.2.13676358" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Install CMake and Ninja
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build
