@@ -1,0 +1,38 @@
+name: Build 8B model
+
+on:
+  workflow_dispatch:
+
+jobs:
+  model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
+          df -h
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python tools
+        run: pip install -q huggingface_hub numpy
+
+      - name: Download 8B checkpoint
+        working-directory: android
+        run: |
+          mkdir -p models
+          huggingface-cli download Edge0/Edge0-8B-A1B-preview --local-dir models/edge0-8b
+
+      - name: Convert to GGUF
+        working-directory: android
+        run: python ../windows/tools/convert_mlx_to_gguf.py --dir models/edge0-8b
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edge0-8b-gguf
+          path: android/models/edge0-8b-gguf/
