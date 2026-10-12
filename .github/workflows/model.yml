@@ -32,7 +32,17 @@ jobs:
         working-directory: android
         run: python ../windows/tools/convert_mlx_to_gguf.py --dir models/edge0-8b
 
-      - uses: actions/upload-artifact@v4
+      - name: Save conversion log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edge0-convert-log
+          path: android/models/edge0-8b-gguf/convert.log
+          if-no-files-found: warn
+
+      - name: Save GGUF files
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
           name: edge0-8b-gguf
           path: android/models/edge0-8b-gguf/
