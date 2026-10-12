@@ -24,6 +24,11 @@ jobs:
       - name: Install CMake and Ninja
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build
 
+      - name: Set git identity
+        run: |
+          git config --global user.email "ci@example.com"
+          git config --global user.name "CI"
+
       - name: Build engine
         working-directory: android
         run: |
